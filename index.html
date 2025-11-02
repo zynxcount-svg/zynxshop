@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Zynx Shop — Demo Tek Dosya</title>
+
+  <!-- Font + Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    :root{
+      --bg:#07070a;
+      --muted:#bfc7d1;
+      --accent:#6d57ff;
+      --accent2:#2fe6c4;
+      --glass:rgba(255,255,255,0.03);
+      --card-border:rgba(109,87,255,0.12);
+      --radius:12px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;font-family:'Poppins',system-ui,Arial;color:var(--muted);
+      background:
+        radial-gradient(800px 400px at 10% 8%, rgba(109,87,255,0.03), transparent),
+        linear-gradient(180deg,var(--bg), #020203 160%);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      display:flex;flex-direction:column;min-height:100vh;overflow-x:hidden;
+    }
+
+    /* Top */
+    .top{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.02);gap:12px}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent), #4fb0ff);display:flex;align-items:center;justify-content:center;color:#031018;font-weight:800;font-size:18px;box-shadow:0 8px 26px rgba(109,87,255,0.12)}
+    .title h1{margin:0;font-size:1.05rem;color:#fff}
+    .title p{margin:0;font-size:0.82rem;color:#9aa3ad}
+    .top-controls{display:flex;gap:10px;align-items:center}
+    .cart{background:var(--glass);padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.02);display:flex;gap:10px;align-items:center}
+    .badge{background:#111;color:white;padding:6px 8px;border-radius:999px;font-weight:700;font-size:0.85rem}
+
+    main{width:94%;max-width:1200px;margin:20px auto;flex:1}
+    .hero{display:flex;gap:18px;align-items:center;justify-content:space-between;background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.02)}
+    .terminal{background:#020206;color:#7fffd4;padding:10px;border-radius:8px;font-family:monospace;font-size:0.85rem;min-width:220px;border:1px solid rgba(63,255,210,0.06)}
+
+    .controls{display:flex;gap:12px;align-items:center;margin:18px 0;flex-wrap:wrap}
+    .search{display:flex;gap:10px;align-items:center;background:var(--glass);padding:10px;border-radius:999px;border:1px solid rgba(255,255,255,0.02);min-width:240px;flex:1}
+    .search input{background:transparent;border:0;outline:none;color:var(--muted);font-size:0.95rem}
+    .filters{display:flex;gap:8px;align-items:center}
+    .chip{padding:8px 12px;border-radius:999px;font-size:.85rem;border:1px solid var(--card-border);cursor:pointer;background:transparent;color:var(--muted)}
+    .chip.active{background:linear-gradient(90deg, rgba(109,87,255,0.16), rgba(47,230,196,0.06));border-color:rgba(109,87,255,0.22);color:#fff}
+
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;padding:14px;min-height:140px;border:1px solid var(--card-border);display:flex;flex-direction:column;gap:10px;transition:transform .22s, box-shadow .22s}
+    .card:hover{transform:translateY(-8px);box-shadow:0 20px 60px rgba(2,2,4,0.6);border-color:rgba(109,87,255,0.26)}
+    .icon{width:56px;height:56px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;color:white;background:linear-gradient(135deg,var(--accent), #4fb0ff);box-shadow:0 8px 26px rgba(75,0,255,0.12)}
+    .card h3{margin:0;color:#fff;font-size:1.02rem}
+    .card p{margin:0;color:#aeb7c1;font-size:0.9rem;flex:1}
+    .meta{display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .btn{padding:8px 12px;border-radius:10px;border:0;cursor:pointer;font-weight:600;background:transparent;color:var(--muted);border:1px solid rgba(255,255,255,0.04)}
+    .btn.primary{background:linear-gradient(90deg,var(--accent), var(--accent2));color:#041018;border:0}
+
+    /* modal */
+    .backdrop{position:fixed;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.65), rgba(0,0,0,0.78));display:flex;align-items:center;justify-content:center;padding:18px;z-index:1200;opacity:0;pointer-events:none;transition:opacity .22s}
+    .backdrop.show{opacity:1;pointer-events:auto}
+    .modal{width:100%;max-width:920px;border-radius:14px;background:linear-gradient(180deg,#0b0d10,#090b0f);padding:18px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 40px 120px rgba(2,2,6,0.9);transform:translateY(20px);opacity:0;transition:transform .26s,opacity .2s}
+    .backdrop.show .modal{transform:none;opacity:1}
+    .modal-grid{display:grid;grid-template-columns:300px 1fr;gap:16px}
+    .big-icon{height:280px;border-radius:12px;background:linear-gradient(135deg,var(--accent), #4fb0ff);display:flex;align-items:center;justify-content:center;font-size:40px;color:#041018}
+    .modal h2{margin:0;color:#fff}
+    .meta-row{display:flex;gap:12px;margin-top:8px;color:#9aa3ad;font-size:0.9rem}
+    .modal p{color:#c7cfd6;line-height:1.45;margin-top:12px}
+    .actions{display:flex;gap:10px;margin-top:16px;align-items:center}
+
+    .loader{font-family:monospace;color:var(--accent2);background:rgba(255,255,255,0.02);padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.02);font-size:0.9rem;display:inline-block}
+    .host-guide{margin-top:12px;color:#9aa3ad;font-size:0.92rem}
+
+    /* checkout/admin */
+    input,textarea,select{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);padding:10px;border-radius:8px;color:var(--muted);outline:none;width:100%}
+    .panel{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.02);}
+
+    @media (max-width:800px){
+      .modal-grid{grid-template-columns:1fr}
+      .big-icon{height:160px}
+      .hero{flex-direction:column;align-items:stretch}
+    }
+
+    .fade{animation:fadeInUp .42s both}
+    @keyframes fadeInUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  </style>
+</head>
+<body>
+  <div class="top">
+    <div class="brand" aria-hidden="false">
+      <div class="logo">ZY</div>
+      <div class="title">
+        <h1>Zynx Shop</h1>
+        <p>Sanal ürünler vitrini — by Zynx</p>
+      </div>
+    </div>
+
+    <div class="top-controls">
+      <div class="cart" title="Sepet">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <div id="cartCount" class="badge" aria-live="polite">0</div>
+      </div>
+      <button id="adminBtn" class="btn" title="Admin">Admin</button>
+    </div>
+  </div>
+
+  <main>
+    <section class="hero fade">
+      <div class="left">
+        <h2>Zynx Shop — Demo (Tek Dosya)</h2>
+        <p>Ürünlere tıkla, terminal tarzı loading görün, ardından detay + sepet + checkout demo. Tüm ürünler örnektir ve Zynx markalı.</p>
+      </div>
+      <div class="terminal" aria-hidden="false" id="miniTerminal">
+        <span id="termTxt">&gt; Zynx ready.</span>
+      </div>
+    </section>
+
+    <div class="controls fade" style="margin-top:14px">
+      <div class="search" role="search" aria-label="Ürün ara">
+        <i class="fa-solid fa-magnifying-glass" style="opacity:.7"></i>
+        <input id="search" placeholder="Ürün ara (örn: proxy, api, bot)..." aria-label="Ürün arama"/>
+      </div>
+      <div class="filters" role="toolbar" aria-label="Filtreler">
+        <div class="chip active" data-filter="all">Hepsi</div>
+        <div class="chip" data-filter="kart">Sanal Kart</div>
+        <div class="chip" data-filter="api">API</div>
+        <div class="chip" data-filter="bot">Bot</div>
+        <div class="chip" data-filter="tool">Tool</div>
+        <div class="chip" data-filter="panel">Panel</div>
+      </div>
+    </div>
+
+    <section class="grid" id="productGrid" aria-live="polite" style="margin-top:8px">
+      <!-- products injected by JS -->
+    </section>
+
+    <section style="margin-top:18px;display:grid;grid-template-columns:1fr;gap:12px">
+      <div class="panel">
+        <strong>Hosting kısa not</strong>
+        <div class="host-guide">
+          Dosyayı `index.html` olarak kaydetip herhangi bir statik host'a (Netlify, Vercel, GitHub Pages vb.) at. Domain/DNS için sağlayıcının rehberini takip et. Gerçek ödeme için sunucu tarafı entegrasyonu gerekir.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer style="padding:18px 20px;text-align:center;color:#8d96a3">© 2025 Zynx — Demo sürüm. Tüm ürünler örnektir.</footer>
+
+  <!-- detail modal -->
+  <div id="backdrop" class="backdrop" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="modal fade" role="document" id="modal">
+      <div class="modal-grid">
+        <div>
+          <div class="big-icon" id="modalIcon"><i class="fa-solid fa-box-open" style="font-size:48px"></i></div>
+        </div>
+        <div>
+          <h2 id="modalTitle">Ürün Başlığı</h2>
+          <div class="meta-row">
+            <div id="modalCategory">Kategori</div>
+            <div id="modalPrice">Fiyat</div>
+            <div id="modalType">Tip: Dijital</div>
+          </div>
+          <p id="modalDesc">Ürün detay açıklaması buraya gelecek.</p>
+
+          <div class="actions">
+            <button id="buyBtn" class="buy btn primary"><i class="fa-solid fa-cart-shopping" style="margin-right:8px"></i>Sepete Ekle</button>
+            <button id="openBtn" class="btn outline"><i class="fa-solid fa-arrow-up-right-from-square" style="margin-right:8px"></i>Aç / İndir</button>
+            <button id="checkoutBtn" class="btn">Ödeme Yap</button>
+            <button id="closeBtn" class="btn outline"><i class="fa-solid fa-arrow-left" style="margin-right:8px"></i>Geri</button>
+          </div>
+
+          <div style="margin-top:12px;color:#93a0ab;font-size:0.9rem">Not: Demo arayüz. "Aç / İndir" yalnızca örnek link açar; gerçek ödeme için entegrasyon gereklidir.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- checkout modal -->
+  <div id="checkoutBackdrop" class="backdrop" aria-hidden="true">
+    <div class="modal" style="max-width:680px">
+      <h2>Ödeme — Demo</h2>
+      <div style="display:grid;grid-template-columns:1fr 320px;gap:12px;margin-top:12px">
+        <div>
+          <label class="small">İsim Soyisim</label>
+          <input id="buyerName" placeholder="Ör: Zynx Kullanıcı" />
+          <label class="small" style="margin-top:8px">Kart Numarası</label>
+          <input id="cardNum" placeholder="4242 4242 4242 4242" />
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <input id="cardExp" placeholder="MM/YY" />
+            <input id="cardCvc" placeholder="CVC" />
+          </div>
+        </div>
+        <div class="panel">
+          <strong>Sipariş Özeti</strong>
+          <div id="checkoutList" style="margin-top:8px"></div>
+          <div style="margin-top:8px;font-weight:700" id="checkoutTotal">Toplam: ₺0</div>
+          <div style="margin-top:12px">
+            <button id="payConfirm" class="btn primary">Ödemeyi Simüle Et</button>
+            <button id="payCancel" class="btn outline">İptal</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- admin modal -->
+  <div id="adminBackdrop" class="backdrop" aria-hidden="true">
+    <div class="modal" style="max-width:900px">
+      <h2>Admin Paneli — Zynx</h2>
+      <div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap">
+        <div style="flex:1;min-width:260px">
+          <label class="small">Ürün Başlığı</label>
+          <input id="admTitle" />
+          <label class="small" style="margin-top:8px">Kategori</label>
+          <select id="admCategory"><option value="tool">tool</option><option value="api">api</option><option value="bot">bot</option><option value="kart">kart</option><option value="panel">panel</option></select>
+          <label class="small" style="margin-top:8px">Fiyat</label>
+          <input id="admPrice" />
+          <label class="small" style="margin-top:8px">Icon (FontAwesome sınıfı)</label>
+          <input id="admIcon" placeholder="fa-robot" />
+        </div>
+        <div style="flex:1;min-width:260px">
+          <label class="small">Açıklama</label>
+          <textarea id="admDesc" rows="6"></textarea>
+          <label class="small" style="margin-top:8px">Link (indir/ürün)</label>
+          <input id="admLink" />
+        </div>
+      </div>
+      <div style="margin-top:12px;display:flex;gap:8px">
+        <button id="admAdd" class="btn primary">Ürün Ekle / Güncelle</button>
+        <button id="admExport" class="btn">Ürünleri JSON İndir</button>
+        <button id="admClose" class="btn outline">Kapat</button>
+      </div>
+      <div style="margin-top:12px;color:#99a3ad">Admin demo şifresi: <strong>zynxadmin</strong>. Gerçek kullanımda mutlaka güvenli auth ekleyin.</div>
+    </div>
+  </div>
+
+  <!-- loading overlay -->
+  <div id="loadingOverlay" style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:1600;pointer-events:none;opacity:0;transition:opacity .18s">
+    <div style="background:rgba(3,3,6,0.86);padding:22px;border-radius:12px;border:1px solid rgba(255,255,255,0.02);box-shadow:0 30px 120px rgba(2,2,6,0.85);min-width:280px;text-align:center;color:var(--muted)">
+      <div style="font-family:monospace;color:var(--accent2);margin-bottom:12px" id="loadingLine">&gt; Loading</div>
+      <div class="loader" id="loadingDots">Initializing<span class="dot">...</span></div>
+    </div>
+  </div>
+
+  <script>
+    /******************************************************
+     * Zynx Shop — Single-file demo
+     * - Products embedded in JS (no fetch)
+     * - Modal detail, terminal-loading, cart (localStorage)
+     * - Checkout demo, Admin demo (localStorage) with export
+     ******************************************************/
+
+    // default embedded products (Zynx-branded examples)
+    const products = [
+      { id:'zynx-001', title:'Zynx Sanal Kart — FastPay', category:'kart', price:'₺29', desc:'Zynx FastPay tek kullanımlık sanal kart — hızlı ve güvenli ödemeler.', icon:'fa-credit-card', link:'#' },
+      { id:'zynx-002', title:'Zynx Proxy Pool 500', category:'tool', price:'₺49', desc:'Zynx rotasyonlu proxy havuzu (500 IP). Yüksek hız, global erişim.', icon:'fa-sitemap', link:'#' },
+      { id:'zynx-003', title:'Zynx SMS Verify API', category:'api', price:'₺39', desc:'Telefon doğrulama API — hızlı entegrasyon, global destek.', icon:'fa-sms', link:'#' },
+      { id:'zynx-004', title:'Zynx Bot Framework v2', category:'bot', price:'₺59', desc:'Özelleştirilebilir otomasyon çatısı — webhook, scheduler, yönetim paneli.', icon:'fa-robot', link:'#' },
+      { id:'zynx-005', title:'Zynx VPN Panel', category:'panel', price:'₺99', desc:'Kullanıcı yönetimi ve sunucu kontrolü içeren ZynxVPN kontrol paneli.', icon:'fa-shield-halved', link:'#' },
+      { id:'zynx-006', title:'Zynx API KeyGen', category:'tool', price:'Ücretsiz', desc:'JWT destekli API anahtarı üretici (öğrenme/demo amaçlı).', icon:'fa-key', link:'#' },
+      { id:'zynx-007', title:'Zynx Payment Mock', category:'api', price:'₺19', desc:'Ödeme testi için ödeme geçidi simülatörü.', icon:'fa-credit-card-blank', link:'#' },
+      { id:'zynx-008', title:'Zynx Auto-Scaler Script', category:'tool', price:'₺24', desc:'Sunucu kaynaklarını otomatik ölçeklendiren script paketi.', icon:'fa-gears', link:'#' },
+      { id:'zynx-009', title:'Zynx Discord Bot Pack', category:'bot', price:'₺14', desc:'Moderasyon ve bildirim botları içeren Discord paketi.', icon:'fa-discord', link:'#' },
+      { id:'zynx-010', title:'Zynx SSO Auth Module', category:'api', price:'₺45', desc:'OAuth2 + SAML destekli tek oturum açma modülü.', icon:'fa-user-lock', link:'#' },
+      { id:'zynx-011', title:'Zynx Crypto Wallet Mock', category:'tool', price:'₺34', desc:'Eğitim amaçlı sanal cüzdan ve transfer simülasyonu.', icon:'fa-wallet', link:'#' },
+      { id:'zynx-012', title:'Zynx OTP Service', category:'api', price:'₺12', desc:'SMS/Email OTP servisi — düşük gecikme, yüksek teslimat.', icon:'fa-mobile-screen-button', link:'#' },
+      { id:'zynx-013', title:'Zynx Panel Theme Pack', category:'panel', price:'Ücretsiz', desc:'Hazır panel temaları: dark, neon, minimal.', icon:'fa-paint-roller', link:'#' }
+    ];
+
+    // DOM refs
+    const grid = document.getElementById('productGrid');
+    const chips = document.querySelectorAll('.chip');
+    const searchInput = document.getElementById('search');
+    const termTxt = document.getElementById('termTxt');
+    const backdrop = document.getElementById('backdrop');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalDesc = document.getElementById('modalDesc');
+    const modalPrice = document.getElementById('modalPrice');
+    const modalCategory = document.getElementById('modalCategory');
+    const modalIcon = document.getElementById('modalIcon');
+    const buyBtn = document.getElementById('buyBtn');
+    const openBtn = document.getElementById('openBtn');
+    const checkoutBtn = document.getElementById('checkoutBtn');
+    const closeBtn = document.getElementById('closeBtn');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const loadingLine = document.getElementById('loadingLine');
+    const cartCount = document.getElementById('cartCount');
+
+    const checkoutBackdrop = document.getElementById('checkoutBackdrop');
+    const checkoutList = document.getElementById('checkoutList');
+    const checkoutTotal = document.getElementById('checkoutTotal');
+    const payConfirm = document.getElementById('payConfirm');
+    const payCancel = document.getElementById('payCancel');
+    const buyerName = document.getElementById('buyerName');
+
+    const adminBtn = document.getElementById('adminBtn');
+    const adminBackdrop = document.getElementById('adminBackdrop');
+    const admAdd = document.getElementById('admAdd');
+    const admExport = document.getElementById('admExport');
+    const admClose = document.getElementById('admClose');
+    const admTitle = document.getElementById('admTitle');
+    const admCategory = document.getElementById('admCategory');
+    const admPrice = document.getElementById('admPrice');
+    const admIcon = document.getElementById('admIcon');
+    const admDesc = document.getElementById('admDesc');
+    const admLink = document.getElementById('admLink');
+
+    // utility
+    function escapeHtml(s){ return (s+'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    // render initial grid using embedded products + any admin-saved products
+    function loadSavedProducts(){
+      try{
+        const saved = JSON.parse(localStorage.getItem('zynx_products') || 'null');
+        if(Array.isArray(saved) && saved.length) return saved;
+      }catch(e){}
+      return null;
+    }
+
+    function initAndRender(){
+      const saved = loadSavedProducts();
+      const currentProducts = saved || products;
+      render(currentProducts);
+      updateCartUI();
+      showMini('> Ürünler yüklenmiş. Hoş geldin Zynx!');
+    }
+
+    function render(list){
+      grid.innerHTML = '';
+      if(!list || list.length === 0){
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:28px;color:#8f98a3">Ürün bulunamadı.</div>';
+        return;
+      }
+      list.forEach(p=>{
+        const el = document.createElement('article');
+        el.className = 'card fade';
+        el.tabIndex = 0;
+        el.setAttribute('role','button');
+        el.setAttribute('aria-label', `${p.title} detaylarını görüntüle`);
+        el.innerHTML = `
+          <div style="display:flex;gap:12px;align-items:center">
+            <div class="
+
